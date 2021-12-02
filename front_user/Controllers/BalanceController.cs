@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ReconBank.FrontUser.Configuration;
 using ReconBank.FrontUser.Db;
 using ReconBank.FrontUser.Models;
 
@@ -13,12 +14,15 @@ namespace ReconBank.FrontUser.Controllers
     [Route("[controller]")]
     public class BalanceController : ControllerBase
     {
+        private readonly PublisherApiConfiguration _publisherApiConfiguration;
+
         private readonly BankDbContext _dbContext;
 
         private readonly HttpClient _httpClient = new HttpClient();
 
-        public BalanceController(BankDbContext dbContext)
+        public BalanceController(PublisherApiConfiguration publisherApiConfiguration, BankDbContext dbContext)
         {
+            this._publisherApiConfiguration = publisherApiConfiguration;
             this._dbContext = dbContext;
         }
 
@@ -109,7 +113,8 @@ namespace ReconBank.FrontUser.Controllers
             {
                 queryString += $"&destination_id={request.DestinationId}";
             }
-            var response = await this._httpClient.PostAsync($"http://localhost:5000/v1/balance/operation-was-made?{queryString}", null);
+
+            var response = await this._httpClient.PostAsync($"{this._publisherApiConfiguration.Address}/v1/balance/operation-was-made?{queryString}", null);
             if (response.IsSuccessStatusCode)
             {
                 return Ok();
