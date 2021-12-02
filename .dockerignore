@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+
+**/node_modules
+
+**/.env
+**/appsettings.json
+**/appsettings.*.json
+
+**/launchSettings.json
+**/launchSettings.*.json
+
+**/.git
+**/.gitignore

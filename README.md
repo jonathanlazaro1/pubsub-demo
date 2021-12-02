@@ -1,1 +1,1 @@
-# PubSub demo
+# PubSub for the win
