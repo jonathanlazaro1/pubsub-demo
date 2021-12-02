@@ -35,14 +35,7 @@ namespace ReconBank.FrontUser
 
             services.AddDbContext<BankDbContext>();
 
-            services.AddSingleton<IMessageHandler, MessageHandler>();
-
-            services.AddTransient<IEventTypeHandlerFactory, EventTypeHandlerFactory>();
-            services.AddTransient<IUserWasCreatedEventTypeHandler, UserWasCreatedEventTypeHandler>();
-            services.AddTransient<IOperationWasMadeEventTypeHandler, OperationWasMadeEventTypeHandler>();
-
-            services.AddHostedService<PubSubIntegrationService>();
-
+            services.AddPubSubIntegration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
