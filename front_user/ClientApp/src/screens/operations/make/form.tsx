@@ -68,20 +68,7 @@ export function MakeOperationFormScreen() {
       newDestination = null;
     }
 
-    let newOperation = {
-      ...operation,
-      destinationId: newDestination,
-    };
-
-    setOperation(newOperation);
-  };
-
-  const ownTitularityChanged = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let newOperation = {
-      ...operation,
-      ownTitularity: e.currentTarget.checked,
-    };
-    setOperation(newOperation);
+    setFieldValue("destinationId", newDestination);
   };
 
   return (
@@ -111,14 +98,12 @@ export function MakeOperationFormScreen() {
         />
       </Form.Group>
 
-      {operation.type === OperationType.OUTGOING && (
+      {values.type === OperationType.OUTGOING && (
         <div className="mb-3">
-          <Form.Check
-            type="checkbox"
+          <AppCheckboxInput
             id="fomOwnTitularity"
+            name="ownTitularity"
             label="Own titularity outgoing"
-            checked={operation.ownTitularity}
-            onChange={ownTitularityChanged}
           />
         </div>
       )}
