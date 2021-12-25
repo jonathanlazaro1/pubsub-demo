@@ -1,6 +1,7 @@
 import { useFormikContext } from "formik";
 import React, { useEffect, useRef, useState } from "react";
-import { FormControl } from "react-bootstrap";
+import { Form, FormControl } from "react-bootstrap";
+import { isFieldValid } from "../utils";
 
 interface DecimalInputProps {
   name: string;
@@ -32,7 +33,7 @@ export function DecimalInput(props: DecimalInputProps): JSX.Element {
   };
 
   const onBlur = () => {
-    setFieldTouched(props.name);
+    setFieldTouched(props.name, true, true);
     setIsEditing(false);
   };
 
@@ -93,6 +94,8 @@ export function DecimalInput(props: DecimalInputProps): JSX.Element {
       {!isEditing && (
         <FormControl
           value={getViewingValue()}
+          isValid={isFieldValid(props.name, touched, errors)}
+          isInvalid={!isFieldValid(props.name, touched, errors)}
           onFocus={onFocus}
           onChange={() => onFocus()}
         />
@@ -101,13 +104,18 @@ export function DecimalInput(props: DecimalInputProps): JSX.Element {
         <>
           <FormControl
             ref={editInputRef}
-            // error={touched[props.name] && errors[props.name] !== undefined}
+            isValid={isFieldValid(props.name, touched, errors)}
+            isInvalid={!isFieldValid(props.name, touched, errors)}
             value={getEditingValue()}
             onBlur={onBlur}
             onChange={setValue}
           />
-          {/* {touched[props.name] && errors[props.name] && <AppErrorText>{errors[props.name]}</AppErrorText>} */}
         </>
+      )}
+      {!isFieldValid(props.name, touched, errors) && (
+        <Form.Control.Feedback type="invalid">
+          {errors[props.name]}
+        </Form.Control.Feedback>
       )}
     </>
   );

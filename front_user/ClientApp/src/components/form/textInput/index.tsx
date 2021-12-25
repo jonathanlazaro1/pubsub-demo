@@ -1,6 +1,7 @@
 import React from "react";
 import { useFormikContext } from "formik";
-import { FormControl } from "react-bootstrap";
+import { Form, FormControl } from "react-bootstrap";
+import { isFieldValid } from "../utils";
 
 interface AppTextInputProps {
   name: string;
@@ -8,7 +9,8 @@ interface AppTextInputProps {
 }
 
 export function AppTextInput(props: AppTextInputProps): JSX.Element {
-  const { values, setFieldValue, setFieldTouched } = useFormikContext<any>();
+  const { values, setFieldValue, setFieldTouched, touched, errors } =
+    useFormikContext<any>();
 
   const valueHasChanged = (
     ev: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -21,12 +23,21 @@ export function AppTextInput(props: AppTextInputProps): JSX.Element {
   };
 
   return (
-    <FormControl
-      type="text"
-      value={values[props.name]}
-      onChange={valueHasChanged}
-      onBlur={fieldHasBlurred}
-      onFocus={props.onFocus}
-    />
+    <>
+      <FormControl
+        type="text"
+        value={values[props.name]}
+        onChange={valueHasChanged}
+        isValid={isFieldValid(props.name, touched, errors)}
+        isInvalid={!isFieldValid(props.name, touched, errors)}
+        onBlur={fieldHasBlurred}
+        onFocus={props.onFocus}
+      />
+      {!isFieldValid(props.name, touched, errors) && (
+        <Form.Control.Feedback type="invalid">
+          {errors[props.name]}
+        </Form.Control.Feedback>
+      )}
+    </>
   );
 }
