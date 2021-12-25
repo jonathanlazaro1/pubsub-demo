@@ -1,6 +1,8 @@
 import { useFormikContext } from "formik";
 import React from "react";
 import { Button, Form } from "react-bootstrap";
+import { AppCheckboxInput } from "../../../components/form/checkboxInput";
+import { DecimalInput } from "../../../components/form/decimalInput";
 import { useUserContext } from "../../../context/user";
 import { Operation } from "../../../models/operation";
 import { OperationType } from "../../../models/operationType";
@@ -11,9 +13,6 @@ export function MakeOperationFormScreen() {
   const { values, setFieldValue, submitForm } = useFormikContext<Operation>();
 
   const [users, setUser] = React.useState<User[]>([]);
-  const [operation, setOperation] = React.useState<Operation>(
-    getDefaultOperation()
-  );
 
   const getUsers = async () => {
     if (!userContext?.user) return;
@@ -39,27 +38,12 @@ export function MakeOperationFormScreen() {
     const newType = Number(e.currentTarget.value);
     setFieldValue("type", newType);
 
-    let newOperation = {
-      ...operation,
-      type: newType,
-    };
     if (newType !== OperationType.OUTGOING) {
       setFieldValue("ownTitularity", false);
     }
     if (newType !== OperationType.TRANSFER) {
       setFieldValue("destinationId", null);
     }
-    setOperation(newOperation);
-  };
-
-  const amountInCentsChanged = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    let newOperation = {
-      ...operation,
-      amountInCents: Number(e.currentTarget.value),
-    };
-    setOperation(newOperation);
   };
 
   const destinationIdChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -89,13 +73,7 @@ export function MakeOperationFormScreen() {
 
       <Form.Group className="mb-3" controlId="fomAmountInCents">
         <Form.Label>Amount</Form.Label>
-        <Form.Control
-          type="number"
-          min={1}
-          required
-          value={operation.amountInCents}
-          onChange={amountInCentsChanged}
-        />
+        <DecimalInput name="amountInCents" numberType="currency" />
       </Form.Group>
 
       {values.type === OperationType.OUTGOING && (
