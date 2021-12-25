@@ -1,3 +1,4 @@
+import { useFormikContext } from "formik";
 import React from "react";
 import { Button, Form } from "react-bootstrap";
 import { useUserContext } from "../../../context/user";
@@ -5,16 +6,9 @@ import { Operation } from "../../../models/operation";
 import { OperationType } from "../../../models/operationType";
 import { User } from "../../../models/user";
 
-const getDefaultOperation = (): Operation => {
-  return {
-    type: OperationType.OUTGOING,
-    amountInCents: 1,
-    ownTitularity: false,
-  };
-};
-
 export function MakeOperationFormScreen() {
   const userContext = useUserContext();
+  const { values, setFieldValue, submitForm } = useFormikContext<Operation>();
 
   const [users, setUser] = React.useState<User[]>([]);
   const [operation, setOperation] = React.useState<Operation>(
@@ -35,26 +29,6 @@ export function MakeOperationFormScreen() {
     }
   };
 
-  const makeOperation = async () => {
-    if (!userContext?.user) return;
-
-    const operationBody = { ...operation, originId: userContext.user.id };
-
-    const makeOperationResponse = await fetch(`balance/operation`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(operationBody),
-    });
-    if (makeOperationResponse.ok) {
-      setOperation(getDefaultOperation());
-    } else {
-      const body = await makeOperationResponse.json();
-      console.log("Operation was unsuccesful", body);
-    }
-  };
-
   React.useEffect(() => {
     getUsers();
 
@@ -63,16 +37,17 @@ export function MakeOperationFormScreen() {
 
   const typeChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = Number(e.currentTarget.value);
+    setFieldValue("type", newType);
 
     let newOperation = {
       ...operation,
       type: newType,
     };
     if (newType !== OperationType.OUTGOING) {
-      newOperation.ownTitularity = false;
+      setFieldValue("ownTitularity", false);
     }
     if (newType !== OperationType.TRANSFER) {
-      newOperation.destinationId = null;
+      setFieldValue("destinationId", null);
     }
     setOperation(newOperation);
   };
@@ -110,10 +85,15 @@ export function MakeOperationFormScreen() {
   };
 
   return (
-    <Form>
+    <Form
+      onSubmit={(ev) => {
+        ev.preventDefault();
+        submitForm();
+      }}
+    >
       <Form.Group className="mb-3" controlId="fomOperationType">
         <Form.Label>Type</Form.Label>
-        <Form.Select required value={operation.type} onChange={typeChanged}>
+        <Form.Select required value={values.type} onChange={typeChanged}>
           <option value={OperationType.INCOMING}>Incoming</option>
           <option value={OperationType.OUTGOING}>Outgoing</option>
           <option value={OperationType.TRANSFER}>Transfer</option>
@@ -143,11 +123,11 @@ export function MakeOperationFormScreen() {
         </div>
       )}
 
-      {operation.type === OperationType.TRANSFER && (
+      {values.type === OperationType.TRANSFER && (
         <Form.Group className="mb-3" controlId="fomDestinationId">
           <Form.Label>Destination</Form.Label>
           <Form.Select
-            value={operation.destinationId || ""}
+            value={values.destinationId || ""}
             onChange={destinationIdChanged}
           >
             <option>No user selected</option>
@@ -160,7 +140,7 @@ export function MakeOperationFormScreen() {
         </Form.Group>
       )}
 
-      <Button variant="primary" type="button" onClick={makeOperation}>
+      <Button variant="primary" type="submit">
         Create
       </Button>
     </Form>
