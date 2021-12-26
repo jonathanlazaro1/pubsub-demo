@@ -3,6 +3,10 @@ import React from "react";
 import { Button, Form } from "react-bootstrap";
 import { AppCheckboxInput } from "../../../components/form/checkboxInput";
 import { DecimalInput } from "../../../components/form/decimalInput";
+import {
+  isFieldValid,
+  renderControlFeedback,
+} from "../../../components/form/utils";
 import { useUserContext } from "../../../context/user";
 import { Operation } from "../../../models/operation";
 import { OperationType } from "../../../models/operationType";
@@ -10,7 +14,15 @@ import { User } from "../../../models/user";
 
 export function MakeOperationFormScreen() {
   const userContext = useUserContext();
-  const { values, setFieldValue, submitForm } = useFormikContext<Operation>();
+  const {
+    values,
+    setFieldValue,
+    submitForm,
+    isValid,
+    touched,
+    setFieldTouched,
+    errors,
+  } = useFormikContext<Operation>();
 
   const [users, setUser] = React.useState<User[]>([]);
 
@@ -37,13 +49,16 @@ export function MakeOperationFormScreen() {
   const typeChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newType = Number(e.currentTarget.value);
     setFieldValue("type", newType);
+    setFieldTouched("type", true);
 
     if (newType !== OperationType.OUTGOING) {
       setFieldValue("ownTitularity", false);
     }
     if (newType !== OperationType.TRANSFER) {
-      setFieldValue("destinationId", null);
+      setFieldValue("destinationId", null, false);
     }
+    console.log(errors);
+    console.log(values);
   };
 
   const destinationIdChanged = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -92,18 +107,20 @@ export function MakeOperationFormScreen() {
           <Form.Select
             value={values.destinationId || ""}
             onChange={destinationIdChanged}
+            isInvalid={!isFieldValid("destinationId", touched, errors)}
           >
-            <option>No user selected</option>
+            <option value="">No user selected</option>
             {users.map((u) => (
               <option key={u.id} value={u.id}>
                 {u.name}
               </option>
             ))}
           </Form.Select>
+          {renderControlFeedback("destinationId", touched, errors)}
         </Form.Group>
       )}
 
-      <Button variant="primary" type="submit">
+      <Button variant="primary" type="submit" disabled={!isValid}>
         Create
       </Button>
     </Form>

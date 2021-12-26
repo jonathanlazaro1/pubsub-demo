@@ -2,7 +2,7 @@ import { Formik, FormikHelpers } from "formik";
 import React from "react";
 import { Col, Row } from "react-bootstrap";
 import { useUserContext } from "../../../context/user";
-import { Operation } from "../../../models/operation";
+import { Operation, operationSchema } from "../../../models/operation";
 import { OperationType } from "../../../models/operationType";
 import { MakeOperationFormScreen } from "./form";
 
@@ -54,6 +54,7 @@ export function OperationMakeScreen() {
           <Formik
             initialValues={getDefaultOperation()}
             onSubmit={makeOperation}
+            validationSchema={operationSchema}
           >
             <MakeOperationFormScreen />
           </Formik>

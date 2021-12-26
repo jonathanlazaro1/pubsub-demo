@@ -1,5 +1,5 @@
 const ISO8601Regex =
-  /^(\d{4})(-(\d{2}))??(-(\d{2}))??(T(\d{2}):(\d{2})(:(\d{2}))??(\.(\d+))??(([\+\-]{1}\d{2}:\d{2})|Z)??)??/;
+  /^(\d{4})(-(\d{2}))??(-(\d{2}))??(T(\d{2}):(\d{2})(:(\d{2}))??(\.(\d+))??(([+-]{1}\d{2}:\d{2})|Z)??)??/;
 
 export const fetchApiDateReviver = (_key: string, value: any): any => {
   if (typeof value === "string") {

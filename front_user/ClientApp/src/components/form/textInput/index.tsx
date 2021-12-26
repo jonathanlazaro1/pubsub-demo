@@ -1,7 +1,7 @@
 import React from "react";
 import { useFormikContext } from "formik";
-import { Form, FormControl } from "react-bootstrap";
-import { isFieldValid } from "../utils";
+import { FormControl } from "react-bootstrap";
+import { isFieldValid, renderControlFeedback } from "../utils";
 
 interface AppTextInputProps {
   name: string;
@@ -33,11 +33,7 @@ export function AppTextInput(props: AppTextInputProps): JSX.Element {
         onBlur={fieldHasBlurred}
         onFocus={props.onFocus}
       />
-      {!isFieldValid(props.name, touched, errors) && (
-        <Form.Control.Feedback type="invalid">
-          {errors[props.name]}
-        </Form.Control.Feedback>
-      )}
+      {renderControlFeedback(props.name, touched, errors)}
     </>
   );
 }
