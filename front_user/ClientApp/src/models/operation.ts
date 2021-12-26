@@ -1,15 +1,18 @@
 import * as yup from "yup";
 
 import { OperationType } from "./operationType";
+import { User } from "./user";
 
 export interface Operation {
   id?: string;
-  type?: OperationType;
+  type: OperationType;
   originId?: string;
+  origin?: User | null;
   destinationId?: string | null;
+  destination?: User | null;
   amountInCents: number;
   ownTitularity: boolean;
-  timestamp?: Date;
+  timestamp: Date;
 }
 
 export const operationSchema = yup.object().shape({

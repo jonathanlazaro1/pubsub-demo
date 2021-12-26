@@ -11,6 +11,7 @@ const getDefaultOperation = (): Operation => {
     type: OperationType.OUTGOING,
     amountInCents: 1,
     ownTitularity: false,
+    timestamp: new Date(),
   };
 };
 
