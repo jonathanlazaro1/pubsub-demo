@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using ReconBank.Models.Users;
 
 namespace ReconBank.Models.Balance
@@ -7,6 +8,22 @@ namespace ReconBank.Models.Balance
     public class Operation
     {
         public Guid Id { get; set; }
+
+        [NotMapped]
+        public OperationType Type
+        {
+            get
+            {
+                if (this.DestinationId.HasValue)
+                {
+                    return OperationType.TRANSFER;
+                }
+
+                return this.AmountInCents == Math.Abs(this.AmountInCents)
+                    ? OperationType.INCOMING
+                    : OperationType.OUTGOING;
+            }
+        }
 
         [Required]
         public Guid OriginId { get; set; }
