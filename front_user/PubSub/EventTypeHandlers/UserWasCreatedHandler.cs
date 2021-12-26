@@ -50,7 +50,7 @@ namespace ReconBank.FrontUser.PubSub.EventTypeHandlers
                     {
                         User = user,
                         AmountInCents = 0,
-                        LastUpdatedAt = DateTime.Now
+                        LastUpdatedAt = DateTime.UtcNow
                     });
 
                     await dbContext.SaveChangesAsync();

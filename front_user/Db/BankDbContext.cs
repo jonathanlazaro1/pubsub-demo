@@ -30,8 +30,8 @@ namespace ReconBank.FrontUser.Db
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var utcDateConverter = new ValueConverter<DateTime, string>(
-                v => v.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture),
-                v => DateTime.ParseExact(v, "o", CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind)
+                v => v.ToString("o", CultureInfo.InvariantCulture),
+                v => DateTime.ParseExact(v, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal).ToUniversalTime()
             );
 
             modelBuilder
