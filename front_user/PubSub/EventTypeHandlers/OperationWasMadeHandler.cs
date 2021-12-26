@@ -48,10 +48,12 @@ namespace ReconBank.FrontUser.PubSub.EventTypeHandlers
 
                         var destinationBalance = await dbContext.Balance.SingleAsync(b => b.UserId == operation.DestinationId);
                         destinationBalance.AmountInCents += Math.Abs(operation.AmountInCents);
+                        destinationBalance.LastUpdatedAt = DateTime.UtcNow;
                         dbContext.Update(destinationBalance);
                     }
 
                     originBalance.AmountInCents += amountToUdpdateOriginalBalance;
+                    originBalance.LastUpdatedAt = DateTime.UtcNow;
                     dbContext.Update(originBalance);
 
                     dbContext.Operations.Add(operation);
